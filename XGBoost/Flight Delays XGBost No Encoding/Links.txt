@@ -1,0 +1,7 @@
+https://www.kaggle.com/competitions/flight-delays-spring-2018/data
+USE XGBoost https://mlcourse.ai/book/topic10/assignment10_flight_delays_kaggle.html
+
+Categorical in xgboost https://xgboost.readthedocs.io/en/stable/tutorials/categorical.html
+https://www.kaggle.com/code/znamensky/xgboost-for-beginners
+
+Good lins where I found about **params - https://ethen8181.github.io/machine-learning/trees/xgboost.html

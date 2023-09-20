@@ -1,0 +1,2 @@
+Month,DayofMonth,DayOfWeek,DepTime,UniqueCarrier,Origin,Dest,Distance,dep_delayed_15min
+c-6,c-21,c-3,1519,EV,ATL,ILM,377,Y

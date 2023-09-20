@@ -1,0 +1,15 @@
+1. Reccomend courses - https://github.com/guipsamora/pandas_exercises/
+
+https://github.com/justmarkham?tab=repositories
+
+Select Kernel - Notebook: Select Notebook Kernel command.
+
+2. Create data: https://www.kaggle.com/competitions/playground-series-s3e13/discussion/407829
+
+3. For video - 
+
+My code - https://github.com/kulikofff/MLCourseAI/blob/main/Competition%203%20playground%20E15/feature-imputation-with-a-heat-flux-pg-s3e15.ipynb
+
+Contest - https://www.kaggle.com/competitions/playground-series-s3e15/data
+
+Pandas exercise - https://github.com/guipsamora/pandas_exercises/

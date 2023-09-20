@@ -1,0 +1,11 @@
+Month,DayofMonth,DayOfWeek,DepTime,UniqueCarrier,Origin,Dest,Distance,dep_delayed_15min
+c-10,c-7,c-6,1828,WN,MDW,OMA,423,Y
+c-10,c-14,c-5,1704,OO,SLC,SEA,689,Y
+c-6,c-21,c-3,1519,EV,ATL,ILM,377,Y
+c-12,c-3,c-7,1653,EV,ATL,MYR,317,Y
+c-3,c-24,c-4,2303,US,CLT,CHS,168,Y
+c-5,c-6,c-5,1728,WN,SAN,SMF,480,Y
+c-10,c-20,c-5,2312,AQ,OAK,LAS,407,Y
+c-9,c-9,c-6,1520,YV,SEA,PHX,1107,Y
+c-9,c-5,c-2,1831,FL,ATL,MSP,906,Y
+c-6,c-6,c-2,1932,UA,DEN,DTW,1123,Y
