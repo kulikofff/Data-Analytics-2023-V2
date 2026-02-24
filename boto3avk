@@ -65,7 +65,6 @@ def lambda_handler(event, context):
              error_found = True
              print(f"Error in record {row[0]} incorrect payment method")
              csv_error.append(row)      
-
          try:
              datetime.strptime(date, '%Y-%m-%d')
          except ValueError:
@@ -81,7 +80,6 @@ def lambda_handler(event, context):
         }
         print(f"Error data {csv_error}")
         try:
-
                 csv_buffer = io.StringIO()
                 writer = csv.writer(csv_buffer)
                 writer.writerows(csv_error)
