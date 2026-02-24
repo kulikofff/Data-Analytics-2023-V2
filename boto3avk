@@ -1,0 +1,109 @@
+#CHECKING DATASETS FOR FORMAT OR FEATURE NAME ERRORS
+
+'''
+Event of putting file to S3itself (took from trigger) and cloudwatch
+{"version":"1.0","timestamp":"2026-02-19T11:43:05.830Z","requestContext":{"requestId":"4cb37870-8f2e-4fc2-9e5d-4514357d4ba7",
+"functionArn":"arn:aws:lambda:us-east-1:569608012628:function:S3data:$LATEST","condition":"RetriesExhausted","approximateInvokeCount":3},
+"requestPayload":{"Records":[{"eventVersion":"2.1","eventSource":"aws:s3","awsRegion":"us-east-1",
+"eventTime":"2026-02-19T11:39:45.371Z","eventName":"ObjectCreated:Put","userIdentity":{"principalId":"AWS:AIDAYJH2IQNKICLNL3OGO"},
+"requestParameters":{"sourceIPAddress":"195.146.78.170"},"responseElements":{"x-amz-request-id":"1Q5NST3DZKZDX1C2",
+"x-amz-id-2":"9Cfuhg79BadUHQqyf+TJeLBJyFaSz+28EkghGhzniKDo7cDEtnqYKDZC9s92QFMfcPPnXpf7hGutcMmQFyaMuBwbSSvBeRAg"},
+"s3":{"s3SchemaVersion":"1.0","configurationId":"0e6a8f47-2e97-4286-8121-00377f08685c",
+"bucket":{"name":"boto3avk","ownerIdentity":{"principalId":"A2R433VBDY9DRV"},"arn":"arn:aws:s3:::boto3avk"},
+"object":{"key":"billing_data_meat_june_2023.csv","size":1262,"eTag":"893ac327359c851a699bec90472c10af",
+"sequencer":"006996F68158A8C95B"}}}]}
+'''
+#Test with cut dataset. There is limit on 3 seconds in timeout. Check with 3 seconds (will get SNS "LambdaNotCorrect"), then 30.
+
+import json
+import csv
+import io
+import boto3
+from datetime import datetime
+#S3 boto3 resource
+s3 = boto3.resource('s3')
+
+#Lambda Function
+def lambda_handler(event, context):
+# Empty lists for data and error records
+    data = []
+    csv_error = []
+
+#Get data of bucket name and name of csv file
+    billing_bucket = event['Records'][0]['s3']['bucket']['name']
+    csv_file = event['Records'][0]['s3']['object']['key']
+
+#S3 bucket where incorrect data wil be put
+    error_bucket = 'avk-error-bucket'
+#Get data from csv file
+    obj = s3.Object(billing_bucket, csv_file)
+    data = obj.get()['Body'].read().decode('utf-8').splitlines()
+
+#For if-else operation:    
+    error_found = False
+
+#Define valid product names and currencies    
+    valid_product_lines = ['Beauty', 'Fashion', 'Books', 'Electronics', 'Sports']
+    valid_payment_method = ['Wallet', 'UPI', 'Debit Card', 'Cash on Delivery', 'Credit Card']
+#All products
+#    valid_product_lines = ['Wallet', 'UPI', 'Debit Card', 'Cash on Delivery', 'Credit Card', 'Home & Kitchen']
+
+#Iterating dataset
+    for row in csv.reader(data[1:], delimiter=','):
+#Name of feature in dataset
+         date = row[1]
+         product_line = row[3]
+         payment_method = row[8]
+         billmount = float(row[4])
+#checking valid product names and currencies and appending it no new list:
+         if product_line not in valid_product_lines:
+             error_found = True
+             print(f"Error in record {row[0]} incorrect product line")
+             csv_error.append(row)
+
+         if payment_method not in valid_payment_method:
+             error_found = True
+             print(f"Error in record {row[0]} incorrect payment method")
+             csv_error.append(row)      
+
+         try:
+             datetime.strptime(date, '%Y-%m-%d')
+         except ValueError:
+             error_found = True
+             csv_error.append(row)
+             print(f"Error in record {row[0]} incorrect date format {date}")
+
+#If error_found = True put it to another bucket in a new csv-file. Generates a CSV (with time in its name) file from a list in memory and uploads it to S3.
+    if error_found:
+        copy_source = {
+            'Bucket': billing_bucket,
+            'Key': csv_file
+        }
+        print(f"Error data {csv_error}")
+        try:
+
+                csv_buffer = io.StringIO()
+                writer = csv.writer(csv_buffer)
+                writer.writerows(csv_error)
+
+                s3_object_key = 'errorfolder/error_data{}.csv'.format(datetime.now().strftime("%d%m%Y_%H%M%S"))
+
+                s3.Object(error_bucket, s3_object_key).put(
+                    Body=csv_buffer.getvalue(),
+                    ContentType='text/csv' #
+                )
+        except Exception as e:
+            print(f"Error while creating file in {error_bucket}")
+
+#FOR response            
+#      TODO implement
+        return {
+        'statusCode': 200,
+        'body': json.dumps(csv_error)
+        }
+    else:
+        return {
+        'statusCode': 200,
+        'body': 'No errors found'
+    }
+
