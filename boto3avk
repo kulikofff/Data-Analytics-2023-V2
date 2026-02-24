@@ -1,7 +1,7 @@
 #CHECKING DATASETS FOR FORMAT OR FEATURE NAME ERRORS
 
 '''
-Event of putting file to S3itself (took from trigger) and cloudwatch
+Event of putting file to S3 itself (took from trigger) and cloudwatch
 {"version":"1.0","timestamp":"2026-02-19T11:43:05.830Z","requestContext":{"requestId":"4cb37870-8f2e-4fc2-9e5d-4514357d4ba7",
 "functionArn":"arn:aws:lambda:us-east-1:569608012628:function:S3data:$LATEST","condition":"RetriesExhausted","approximateInvokeCount":3},
 "requestPayload":{"Records":[{"eventVersion":"2.1","eventSource":"aws:s3","awsRegion":"us-east-1",
